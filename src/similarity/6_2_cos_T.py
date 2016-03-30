@@ -14,7 +14,7 @@ import time
 
 time_initial = time.time()
 
-cos_data = pd.read_csv('../../out/cos_A_A01.csv', dtype={'industry': str})
+cos_data = pd.read_csv('../../out/cos_dir_n.csv', dtype={'industry': str})
 
 print(cos_data.head())
 
@@ -22,6 +22,6 @@ cos_data_T = cos_data.T
 
 print(cos_data_T.head())
 
-cos_data_T.to_csv('../../out/cos_A_A01_T.csv')
+cos_data_T.to_csv('../../out/cos_dir_n_T.csv')
 
 print('数据转换完成! 耗时：%fs!' % (time.time() - time_initial))

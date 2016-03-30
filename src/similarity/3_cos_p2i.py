@@ -16,19 +16,24 @@ import time
 
 time_initial = time.time()
 
-ind = pd.read_csv('../../res/Industry/GMJJHY_OK_A_n_list.csv', dtype=str)
+ind = pd.read_csv('../../res/Industry/GMJJHY_OK_all_n_list.csv', dtype=str)
 ipc = pd.read_csv('../../res/A01/IPC_list_n.csv')
 
 print(ind.head())
 print(ipc.head())
 
 words = []
-for index, row in ipc.iterrows():
+l_ind=[]
+l_ind_d=['IPC']
+
+for index, row in ind.iterrows():
     print(row['code'])
     des = row['describe']
     des = re.sub(r'([\[\]\' ])', '', des)
     des = des.split(',')
     words.append(des)
+    l_ind.append(row['code'])
+    l_ind_d.append(row['code'])
 
 # print(words)
 
@@ -50,19 +55,18 @@ corpus_tfidf = tfidf[corpus]
 index = similarities.SparseMatrixSimilarity(tfidf[corpus], num_features=len_dict)
 
 print('创造新的表:')
-new_data = pd.DataFrame(columns=(
-    'industry', 'A01B', 'A01C', 'A01D', 'A01F', 'A01G', 'A01H', 'A01J', 'A01K', 'A01L', 'A01M', 'A01N', 'A01P'))
+new_data = pd.DataFrame(columns=l_ind_d)
 new_data_index = 1
 print(new_data)
 
-l_ipc = ['A01B', 'A01C', 'A01D', 'A01F', 'A01G', 'A01H', 'A01J', 'A01K', 'A01L', 'A01M', 'A01N', 'A01P']
+# l_ipc = ['A01B', 'A01C', 'A01D', 'A01F', 'A01G', 'A01H', 'A01J', 'A01K', 'A01L', 'A01M', 'A01N', 'A01P']
 
-for index_ind, row in ind.iterrows():
+for index_ind, row in ipc.iterrows():
     # if index_ind == 1:
     #     break
     print(row['code'])
     new_data.loc[new_data_index] = None
-    new_data['industry'].loc[new_data_index] = row['code']
+    new_data['IPC'].loc[new_data_index] = row['code']
 
     query = row['describe']
     query = re.sub(r'([\[\]\' ])', '', query)
@@ -86,11 +90,12 @@ for index_ind, row in ind.iterrows():
     # print(words)
 
     # 读取数据 1到n 的数字
-    for i in range(0, 12):
-        new_data[l_ipc[i]].loc[new_data_index] = words[i - 1]
+    len_ind=len(l_ind)
+    for i in range(0, len_ind):
+        new_data[l_ind[i]].loc[new_data_index] = words[i - 1]
 
     new_data_index += 1
     # print(sort_sims[0:1])
-new_data.to_csv('../../out/cos_A_A01.csv', index=False, index_label='index')
+new_data.to_csv('../../out/cos_p2i.csv', index=False, index_label='index')
 
 print('数据转换完成! 耗时：%fs!' % (time.time() - time_initial))

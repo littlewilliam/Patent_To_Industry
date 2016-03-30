@@ -1,13 +1,18 @@
 # coding=utf-8
 __author__ = 'tianchuang'
 
-# 相似度计算,专利数据已按照小类各提取出所有名词,产业类目也已提取出所有名词
+# 相似度计算,直接将所有专利数据分词,产业类目用已提取的100关键词,一个专利小组数据约耗时5秒  字典的大小:74991
+
 
 from gensim import corpora, models, similarities
+import jieba
+
+import numpy as np
 import re
 import pandas as pd
 import time
 
+jieba.initialize()
 
 # python2.7 则需要以下转码
 # import sys
@@ -16,19 +21,46 @@ import time
 
 time_initial = time.time()
 
-ind = pd.read_csv('../../res/Industry/GMJJHY_OK_A_n_list.csv', dtype=str)
-ipc = pd.read_csv('../../res/A01/IPC_list_n.csv')
+# ind = pd.read_csv('../../res/Industry/GMJJHY_OK_all_list.csv', dtype=str)
+ind = pd.read_csv('../../res/Industry/GMJJHY_OK_A_list.csv', dtype=str)
+
+# ipc = pd.read_csv('../../res/IPC_OK.csv', dtype={'code': str, 'describe': list})
+
 
 print(ind.head())
-print(ipc.head())
 
 words = []
-for index, row in ipc.iterrows():
-    print(row['code'])
-    des = row['describe']
-    des = re.sub(r'([\[\]\' ])', '', des)
-    des = des.split(',')
-    words.append(des)
+sentences = []
+l_ipc = ['A01B', 'A01C', 'A01D', 'A01F', 'A01G', 'A01H', 'A01J', 'A01K', 'A01L', 'A01M', 'A01N', 'A01P']
+
+# 读取数据 1到n 的数字(12)
+for i in range(0, 12):
+
+    x = str(l_ipc[i])
+
+    print(x, '开始分词')
+
+    startTime = time.time()
+
+    f = open('../../res/A01/clean/' + x + '.csv', 'r')
+    # 读取所有行
+    lines = f.readlines()[1:]
+    f.close()
+
+    s = ''
+    for l in lines:
+        l = l.strip()
+        l = re.sub(r'([\d])', '', l)
+        l = re.sub(r'([a-z])', '', l)
+
+        s = s + l
+    sentences.append(s)
+    print('转换完成')
+    print('耗时：%fs!' % (time.time() - startTime))
+
+for doc in sentences:
+    words.append(list(jieba.cut(doc)))
+# print('分词结果:\n', (words))
 
 # print(words)
 
@@ -51,11 +83,9 @@ index = similarities.SparseMatrixSimilarity(tfidf[corpus], num_features=len_dict
 
 print('创造新的表:')
 new_data = pd.DataFrame(columns=(
-    'industry', 'A01B', 'A01C', 'A01D', 'A01F', 'A01G', 'A01H', 'A01J', 'A01K', 'A01L', 'A01M', 'A01N', 'A01P'))
+'industry', 'A01B', 'A01C', 'A01D', 'A01F', 'A01G', 'A01H', 'A01J', 'A01K', 'A01L', 'A01M', 'A01N', 'A01P'))
 new_data_index = 1
 print(new_data)
-
-l_ipc = ['A01B', 'A01C', 'A01D', 'A01F', 'A01G', 'A01H', 'A01J', 'A01K', 'A01L', 'A01M', 'A01N', 'A01P']
 
 for index_ind, row in ind.iterrows():
     # if index_ind == 1:
@@ -91,6 +121,6 @@ for index_ind, row in ind.iterrows():
 
     new_data_index += 1
     # print(sort_sims[0:1])
-new_data.to_csv('../../out/cos_A_A01.csv', index=False, index_label='index')
+new_data.to_csv('../../out/cos_dir.csv', index=False, index_label='index')
 
 print('数据转换完成! 耗时：%fs!' % (time.time() - time_initial))
