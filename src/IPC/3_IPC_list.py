@@ -14,16 +14,38 @@ import jieba.posseg as pseg
 
 time_initial = time.time()
 
-l_ipc = ['A01B', 'A01C', 'A01D', 'A01F', 'A01G', 'A01H', 'A01J', 'A01K', 'A01L', 'A01M', 'A01N', 'A01P']
+# 读取IPC代码与描述
+def read_IPC_code():
+    print('开始读取IPC代码与描述')
+    ipc_code = pd.read_csv('../../../res/A01/IPC_Comment.csv')
+    l_ipc_code = []
+    l_ipc = []
+
+    for index, item in ipc_code.iterrows():
+        code = item['code']
+        # 此处为判断A0大类下的全部12个小类,可调整
+        if code[0:2] == 'A0':
+            l_ipc_code.append(code)
+            code = code + ' ' + item['describe']
+            l_ipc.append(code)
+            print(code)
+
+    return l_ipc_code, l_ipc
+    print('读取完毕')
+    # l_ipc_code = ['A01B', 'A01C', 'A01D', 'A01F', 'A01G', 'A01H', 'A01J', 'A01K', 'A01L', 'A01M', 'A01N', 'A01P']
+
+l_ipc_code, l_ipc = read_IPC_code()
 
 print('创造新的表:')
 new_data = pd.DataFrame(columns=('code', 'describe'))
 print(new_data)
 n_all = ['n', 'nr', 'nr1', 'nr2', 'nrj', 'nrf', 'ns', 'nsf', 'nt', 'nz', 'nl', 'ng']
+v_all=['v']
+n_all=n_all+v_all
 
 # 读取数据 1到n 的数字
 for i in range(0, 12):
-    x = str(l_ipc[i])
+    x = str(l_ipc_code[i])
     print(x, '开始分词')
 
     startTime = time.time()

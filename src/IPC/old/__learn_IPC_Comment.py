@@ -28,7 +28,8 @@ for index, item in ipc_data.iterrows():
     code = item['code']
 
     if code[0:2] == 'A0':
-    # if code[0] == 'A':
+        print(code)
+        code=code+' '+item['describe']
         print(code)
         l.append(code)
 print(l)

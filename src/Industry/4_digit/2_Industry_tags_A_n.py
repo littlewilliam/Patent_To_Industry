@@ -15,9 +15,9 @@ __author__ = 'tianchuang'
 # nl 名词性惯用语
 # ng 名词性语素
 # code,describe
-# 011,"['种用', '高粱', '小麦', '籼稻', '大麦', '稻谷', '糯玉米', '谷子', '甜玉米', '谷物', '硬质小麦', '糯稻', '白粒',
-# 012,"['种用', '豌豆', '油菜籽', '绿豆', '小豆', '芝麻', '白芝麻', '木薯', '饭豆', '花生', '蚕豆', '杂豆', '鹰嘴豆', '
-# 013,"['糖料', '烟草', '棉花', '烟叶', '麻类', '甜菜', '甘蔗', '未加工', '籽棉', '线麻', '肋烟', '烟秆', '生麻', '麻秆'
+# 0111,"[稻谷, 稻谷, 早籼稻, 种用, 早籼稻, 早籼稻, 籼稻, 籼稻, 籼稻, 籼稻, 种用, 籼稻, 籼稻, 粳稻, 种用, 粳稻, 粳稻, 糯稻, 种用, 糯稻, 糯稻, 稻谷, 稻谷, 壳, 稻谷, 秸, 列明, 稻谷]"
+# 0112,"[小麦, 小麦, 硬质小麦, 种用, 硬质小麦, 硬质小麦, 软质, 小麦, 种用, 软质, 小麦, 软质, 小麦, 小麦, 种用, 小麦, 小麦, 小麦, 麦秸, 列明, 小麦]"
+# 0113,"[玉米, 玉米, 玉米, 种用, 白, 玉米, 玉米, 黄玉米, 种用, 黄玉米, 黄玉米, 糯玉米, 种用, 糯玉米, 糯玉米, 甜玉米, 种用, 甜玉米, 甜玉米, 玉米, 玉米秸, 列明, 玉米]"
 
 import jieba
 import jieba.analyse
@@ -29,7 +29,7 @@ time_initial = time.time()
 
 # 读取数据
 startTime = time.time()
-ind_data = pd.read_csv('../../res/Industry/GMJJHY_OK_all.csv', dtype=str)
+ind_data = pd.read_csv('../../../res/Industry/4_digit/GMJJHY_OK_4.csv', dtype=str)
 print('数据读取完成! 耗时：%fs!' % (time.time() - startTime))
 print(ind_data.head())
 
@@ -39,9 +39,12 @@ print(new_data)
 
 i = 0
 n_all = ['n', 'nr', 'nr1', 'nr2', 'nrj', 'nrf', 'ns', 'nsf', 'nt', 'nz', 'nl', 'ng']
+v_all=['v']
+n_all=n_all+v_all
+
 for index, row in ind_data.iterrows():
-    # if i == 2:
-    #     break
+    if int(row['code'] )>540:
+        break
     new_data.loc[i] = None
     new_data['code'].loc[i] = row['code']
     # cut = list(jieba.cut(row['describe']))
@@ -63,5 +66,5 @@ for index, row in ind_data.iterrows():
 
 print(new_data.head())
 
-new_data.to_csv('../../res/Industry/GMJJHY_OK_all_n_list.csv', index=False, index_label='index')
+new_data.to_csv('../../../res/Industry/4_digit/GMJJHY_OK_A_n_list_4.csv', index=False,encoding='utf-8')
 print('数据转换完成! 耗时：%fs!' % (time.time() - startTime))

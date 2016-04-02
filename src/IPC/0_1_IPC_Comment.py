@@ -24,6 +24,7 @@ lines = f.readlines()[0:]
 f.close()
 print('数据读取完成! 耗时：%fs!' % (time.time() - startTime))
 
+
 print('创造新的表:')
 new_data = pd.DataFrame(columns=('code', 'describe'))
 print(new_data)
