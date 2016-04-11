@@ -16,6 +16,7 @@ import time
 # sys.setdefaultencoding("utf-8")
 
 time_initial = time.time()
+stopwords = {}.fromkeys([line.rstrip() for line in open('../../../res/stopwords/baidu.txt')])
 
 ind = pd.read_csv('../../../res/Industry/4_digit/GMJJHY_OK_A_n_list_4.csv', dtype=str)
 ipc = pd.read_csv('../../../res/A/IPC_Comment_complete_A_list_n.csv')
@@ -30,7 +31,12 @@ for index, row in ipc.iterrows():
     des = row['describe']
     des = re.sub(r'([\[\]\' ])', '', des)
     des = des.split(',')
-    words.append(des)
+    s_ok = []
+    for item in des:
+        if item not in stopwords:
+            s_ok.append(item)
+
+    words.append(s_ok)
 
 # print(words)
 

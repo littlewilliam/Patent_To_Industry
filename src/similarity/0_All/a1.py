@@ -10,16 +10,18 @@ from gensim import corpora, models, similarities
 import re
 import pandas as pd
 import time
+
 # python2.7 则需要以下转码
 # import sys
 # reload(sys)
 # sys.setdefaultencoding("utf-8")
 
 time_initial = time.time()
+stopwords = {}.fromkeys([line.rstrip() for line in open('../../../res/stopwords/baidu.txt')])
 
 ind = pd.read_csv('../../../res/Industry/4_digit/GMJJHY_OK_A_n_list_4.csv', dtype=str)
-ipc = pd.read_csv('../../../res/A/IPC_Comment_complete_A_list_n.csv')
-# ipc = pd.read_csv('../../../res/A01/IPC_Comment_complete_A01_list_n.csv')
+# ipc = pd.read_csv('../../../res/A01/IPC_list_n.csv')
+ipc = pd.read_csv('../../../res/A/IPC_A_list_n.csv')
 
 print(ind.head())
 print(ipc.head())
@@ -30,7 +32,13 @@ for index, row in ipc.iterrows():
     des = row['describe']
     des = re.sub(r'([\[\]\' ])', '', des)
     des = des.split(',')
-    words.append(des)
+    s_ok = []
+    for item in des:
+        if item not in stopwords:
+            s_ok.append(item)
+
+    words.append(s_ok)
+
 
 # print(words)
 
@@ -73,7 +81,6 @@ def read_IPC_code():
 
     return l_ipc_code, l_ipc
     print('读取完毕')
-    # l_ipc_code = ['A01B', 'A01C', 'A01D', 'A01F', 'A01G', 'A01H', 'A01J', 'A01K', 'A01L', 'A01M', 'A01N', 'A01P']
 
 l_ipc_code, l_ipc = read_IPC_code()
 
@@ -101,8 +108,6 @@ def read_ind_code():
 
 l_ind_code, l_ind = read_ind_code()
 
-column_name = ['industry']
-column_name=column_name+l_ipc_code
 column_name_new=['industry']
 column_name_new=column_name_new+l_ipc
 
@@ -141,7 +146,7 @@ for index_ind, row in ind.iterrows():
 
     # 读取数据 1到n 的数字
     for i in range(0, len(l_ipc)):
-        new_data[l_ipc[i]].loc[new_data_index] = words[i - 1]
+        new_data[l_ipc[i-1]].loc[new_data_index] = words[i - 1]
 
     new_data_index += 1
     # print(sort_sims[0:1])
@@ -149,6 +154,6 @@ for index_ind, row in ind.iterrows():
 
 # new_data = new_data.rename(columns={column_name: column_name_new})
 
-new_data.to_csv('../../../out/C_to_C/cos_A_A01.csv', index=False, encoding='gbk')
+new_data.to_csv('../../../out/4_digit/cos_A_A01.csv', index=False, encoding='gbk')
 
 print('数据转换完成! 耗时：%fs!' % (time.time() - time_initial))

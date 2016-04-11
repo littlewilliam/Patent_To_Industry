@@ -3,13 +3,14 @@ __author__ = 'tianchuang'
 
 # 相似度计算,专利数据已按照小类各提取出所有名词,产业类目也已提取出所有名词
 # <查询词>:产业描述文字(A 农、林、牧、渔业,60类目)
-# <语料库>:专利数据[162813条专利](A部下的全部84个小类)
+# <语料库>:专利数据[26000条专利](A01大组共12个小类)
 # 需要转置
 
 from gensim import corpora, models, similarities
 import re
 import pandas as pd
 import time
+
 # python2.7 则需要以下转码
 # import sys
 # reload(sys)
@@ -18,8 +19,8 @@ import time
 time_initial = time.time()
 
 ind = pd.read_csv('../../../res/Industry/4_digit/GMJJHY_OK_A_n_list_4.csv', dtype=str)
-ipc = pd.read_csv('../../../res/A/IPC_Comment_complete_A_list_n.csv')
-# ipc = pd.read_csv('../../../res/A01/IPC_Comment_complete_A01_list_n.csv')
+# ipc = pd.read_csv('../../../res/A01/IPC_list_n.csv')
+ipc = pd.read_csv('../../../res/A/IPC_A_list_n.csv')
 
 print(ind.head())
 print(ipc.head())
@@ -73,7 +74,6 @@ def read_IPC_code():
 
     return l_ipc_code, l_ipc
     print('读取完毕')
-    # l_ipc_code = ['A01B', 'A01C', 'A01D', 'A01F', 'A01G', 'A01H', 'A01J', 'A01K', 'A01L', 'A01M', 'A01N', 'A01P']
 
 l_ipc_code, l_ipc = read_IPC_code()
 
@@ -141,7 +141,7 @@ for index_ind, row in ind.iterrows():
 
     # 读取数据 1到n 的数字
     for i in range(0, len(l_ipc)):
-        new_data[l_ipc[i]].loc[new_data_index] = words[i - 1]
+        new_data[l_ipc[i-1]].loc[new_data_index] = words[i - 1]
 
     new_data_index += 1
     # print(sort_sims[0:1])
@@ -149,6 +149,6 @@ for index_ind, row in ind.iterrows():
 
 # new_data = new_data.rename(columns={column_name: column_name_new})
 
-new_data.to_csv('../../../out/C_to_C/cos_A_A01.csv', index=False, encoding='gbk')
+new_data.to_csv('../../../out/4_digit/cos_A_A01.csv', index=False, encoding='gbk')
 
 print('数据转换完成! 耗时：%fs!' % (time.time() - time_initial))

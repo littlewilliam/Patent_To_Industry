@@ -26,10 +26,11 @@ import time
 import jieba.posseg as pseg
 
 time_initial = time.time()
+stopwords = {}.fromkeys([line.rstrip() for line in open('../../../res/stopwords/baidu.txt')])
 
 # 读取数据
 startTime = time.time()
-ind_data = pd.read_csv('../../../res/Industry/4_digit/GMJJHY_OK_4.csv', dtype=str)
+ind_data = pd.read_csv('../../../res/Industry/4_digit/GMJJHY_OK_4_dropNotInclude.csv', dtype=str)
 print('数据读取完成! 耗时：%fs!' % (time.time() - startTime))
 print(ind_data.head())
 
@@ -39,11 +40,11 @@ print(new_data)
 
 i = 0
 n_all = ['n', 'nr', 'nr1', 'nr2', 'nrj', 'nrf', 'ns', 'nsf', 'nt', 'nz', 'nl', 'ng']
-v_all=['v']
-n_all=n_all+v_all
+v_all = ['v']
+n_all = n_all + v_all
 
 for index, row in ind_data.iterrows():
-    if int(row['code'] )>540:
+    if int(row['code']) > 540:
         break
     new_data.loc[i] = None
     new_data['code'].loc[i] = row['code']
@@ -60,11 +61,17 @@ for index, row in ind_data.iterrows():
             word_list.append(w)
             # print(word)
 
-    new_data['describe'].loc[i] = word_list
+    # 去除停用词
+    s_ok = []
+    for item in word_list:
+        if item not in stopwords:
+            s_ok.append(item)
+
+    new_data['describe'].loc[i] = s_ok
 
     i += 1
 
 print(new_data.head())
 
-new_data.to_csv('../../../res/Industry/4_digit/GMJJHY_OK_A_n_list_4.csv', index=False,encoding='utf-8')
+new_data.to_csv('../../../res/Industry/4_digit/GMJJHY_OK_A_n_list_4.csv', index=False, encoding='utf-8')
 print('数据转换完成! 耗时：%fs!' % (time.time() - startTime))

@@ -40,8 +40,8 @@ print('创造新的表:')
 new_data = pd.DataFrame(columns=('code', 'describe'))
 print(new_data)
 n_all = ['n', 'nr', 'nr1', 'nr2', 'nrj', 'nrf', 'ns', 'nsf', 'nt', 'nz', 'nl', 'ng']
-v_all=['v']
-n_all=n_all+v_all
+# v_all=['v']
+# n_all=n_all+v_all
 
 # 读取数据 1到n 的数字
 for i in range(0, 12):
@@ -63,12 +63,7 @@ for i in range(0, 12):
 
         s = s + l
 
-    words_p = pseg.cut(s)
-    word_list = []
-
-    for w, flag in words_p:
-        if flag in n_all:
-            word_list.append(w)
+    word_list = list(jieba.analyse.extract_tags(s, withWeight=False))
 
     new_data.loc[i] = None
     new_data['code'].loc[i] = x

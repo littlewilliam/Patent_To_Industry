@@ -55,7 +55,7 @@ def read_ind_code():
 
 
 
-# 检验'XXX',例如'0111 稻谷种植',结果的精确率、召回率和F1值,返回三个数值
+# 检验'XXX',例如'0111 稻谷种植',结果的精确率、召回率和F2(F1)值,返回三个数值
 def f_compare_column(data_ok, data_v, compare_column):
     data_c = data_ok.merge(data_v, how='inner', left_on=['p_code'], right_on=compare_column)
     c_1 = len(data_ok)
@@ -72,12 +72,12 @@ def f_compare_column(data_ok, data_v, compare_column):
     else:
         R_Score = 0
     if (P_Score + R_Score) != 0:
-        F1_Score = (2 * P_Score * R_Score) / (P_Score + R_Score)
+        F2_Score = (5 * P_Score * R_Score) / (4*P_Score + R_Score)
     else:
-        F1_Score = 0
+        F2_Score = 0
     print('| 精确率(正确率):%.2f' % (P_Score * 100), '%', ' | 召回率(查全率):%.2f' % (R_Score * 100), '%',
-          ' | F1分数（综合分数）:%.2f' % (F1_Score * 100), '%|')
-    return round(P_Score, 3), round(R_Score, 3), round(F1_Score, 3)
+          ' | F2分数（综合分数）:%.2f' % (F2_Score * 100), '%|')
+    return round(P_Score, 3), round(R_Score, 3), round(F2_Score, 3)
 
 
 # 国知局公布的映射成果,用于验证结果的准确性,检查A 农、林、牧、渔业,60类目

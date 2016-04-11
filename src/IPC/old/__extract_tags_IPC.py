@@ -10,7 +10,7 @@ import time
 
 time_initial = time.time()
 
-f = open('./../res/A01B.csv', 'r')
+f = open('../../../res/A01/clean/A01B.csv', 'r')
 # 读取所有行
 lines = f.readlines()[1:]
 f.close()
@@ -24,8 +24,11 @@ for l in lines:
     sa01b=sa01b+l
 
 print (len(sa01b))
-tagsA01B=jieba.analyse.extract_tags(sa01b, topK=100, withWeight=False, allowPOS=('n'))
-print('A01B:')
-print(",".join(tagsA01B))
+tagsA01B=list(jieba.analyse.extract_tags(sa01b, topK=100, withWeight=False, allowPOS=('n')))
+word_list = []
 
+print(tagsA01B)
+# print('A01B:')
+# print(",".join(tagsA01B))
+#
 print ('完成! 耗时：%fs!' % (time.time() - time_initial))

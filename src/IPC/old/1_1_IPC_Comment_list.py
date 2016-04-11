@@ -2,7 +2,7 @@
 
 __author__ = 'tianchuang'
 
-# 处理IPC类目,提取出名词和动词,IPC类目全文
+# 处理IPC类目,提取出名词和动词,仅最高层级的类目
 
 import jieba
 import jieba.analyse
@@ -21,7 +21,7 @@ print(new_data)
 n_all = ['n', 'nr', 'nr1', 'nr2', 'nrj', 'nrf', 'ns', 'nsf', 'nt', 'nz', 'nl', 'ng']
 v_all=['v']
 n_all=n_all+v_all
-ipc_comment_data = pd.read_csv('../../res/A01/IPC_Comment_complete_A01.csv')
+ipc_comment_data = pd.read_csv('../../res/A01/IPC_Comment.csv')
 
 i = 0
 for index, item in ipc_comment_data.iterrows():
@@ -45,6 +45,6 @@ for index, item in ipc_comment_data.iterrows():
     if item['code'] == 'A01P':
         break
 
-new_data.to_csv('../../res/A01/IPC_Comment_complete_A01_list_n.csv', index=False, index_label='index')
+new_data.to_csv('../../res/A01/IPC_Comment_list_n.csv', index=False, index_label='index')
 
 print('完成! 耗时：%fs!' % (time.time() - time_initial))
